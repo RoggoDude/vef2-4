@@ -2,7 +2,7 @@ Til að keyra:
 npm install
 npm start
 
-Eslint er uppsett:
+ESlint er uppsett:
 npm run lint
 
 Einfalt test sett upp:
