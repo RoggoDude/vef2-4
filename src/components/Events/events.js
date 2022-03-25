@@ -7,29 +7,30 @@ export default function Events(){
   const [events, setEvents] = useState(undefined);
 
   useEffect(() => {
+    async function fetchData() {
+      let resp = await fetch(WEB_SER+"events/").then(res => res.json());
+      setEvents(resp);
+    }
     fetchData();
   }, []);
 
-  async function fetchData() {
-    let resp = await fetch(WEB_SER+"events/").then(res => res.json());
-    setEvents(resp);
-  }
-  console.log(events)
-
   return(
-    <div className="eventsList">
-        {events !== undefined ? (
+    <section className="events">
+      <h2 className="events__title">Viðburðir á næstunni</h2>
+      <ul className="events__list">
+      {events !== undefined ? (
           events.items.map((item) => {
             return (
-            <div className="eventSumm" key={item.id}>
+            <li className="events_event" key={item.id}>
             <Link to={`/event/${item.id}`}>
-              <h2>{item.name}</h2>
+              <a>{item.name}</a>
             </Link>
             <p>{item.description}</p>
-            </div>
+            </li>
             )
           })
-          ): ""}
-    </div>
+          ): "Engir viðburðir á næstunni"}
+      </ul>
+    </section>
   )
 }

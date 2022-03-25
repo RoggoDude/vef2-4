@@ -1,41 +1,49 @@
 import { WEB_SER } from "../../App";
 import React, {useState, useEffect} from 'react';
 import {useParams} from 'react-router-dom';
+import {Link} from 'react-router-dom';
+import Comment from '../Comment/comment'
 
 
-export default function EventPage(){
+
+export default function EventPage({status}){
   const [event, setEvent] = useState(undefined);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
   const {id} = useParams();
 
-  async function fetchData() {
-    let resp = await fetch(WEB_SER+"events/"+id).then(res => res.json());
-    setEvent(resp);
-  }
+  useEffect(() => {
+    async function fetchData() {
+      let resp = await fetch(WEB_SER+"events/"+id).then(res => res.json());
+      setEvent(resp);
+    }
+    fetchData();
+  }, [id]);
 
   return(
-    <div className="eventPage">
+    <section className="event">
         {event !== undefined ? (
           <>
-            <div className="eventInfo">
-              <p>{event.name}</p>
+            <div className="event__info">
+              <h1>{event.name}</h1>
               <p>{event.description}</p>
             </div>
-            <div className="eventRegs">
-              {event.registrations.map(reg => {
+            <ul className="event__registeredList">
+              {event.registrations.map((reg,index) => {
                 return(
-                  <div className="eventReg" key={reg.id}>
-                    <p>{reg.name}</p>
-                    <p>{reg.comment}</p>
-                  </div>
+                    <li className="event__registeredItem" key={index}>
+                      <span className="event__registeredName">{reg.name}</span>
+                      <span className="event__registeredComment">{reg.comment}</span>
+                    </li>
                 )
               })}
-            </div>
+            </ul>
+              {status === "true" ? <>
+              <Comment/>
+              </>: ""}
+                <Link to={"/"}>
+                <p>Til baka</p></Link>
             </>
           ): ""}
-    </div>
+    </section>
   )
 }
