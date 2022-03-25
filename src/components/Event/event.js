@@ -1,66 +1,41 @@
 import { WEB_SER } from "../../App";
-import React from 'react';
+import React, {useState, useEffect} from 'react';
+import {useParams} from 'react-router-dom';
 
 
-class EventPage extends React.Component {
-    constructor(props) {
-      super(props);
-      this.state = {
-        error: null,
-        isLoaded: false,
-        regs: []
-      };
-    }
+export default function EventPage(){
+  const [event, setEvent] = useState(undefined);
 
-  
-    componentDidMount() {
-      console.log(this.state);
-      fetch(WEB_SER+"events/")
-        .then(res => res.json())
-        .then(
-          (result) => {
-            this.setState({
-              isLoaded: true,
-              eId: result.id,
-              eName: result.name,
-              eDesc: result.description,
-              regs: result.registrations
-            });
-          },
-          (error) => {
-            this.setState({
-              isLoaded: true,
-              error
-            });
-          }
-        )
-    }
-  
-    render() {
-      const { error, isLoaded, regs, eDesc, eName } = this.state;
-      if (error) {
-        return <div>Error: {error.message}</div>;
-      } else if (!isLoaded) {
-        return <div>Loading...</div>;
-      } else {
-        return (
-        <div className="eventPage">
-            <div className="eventInfo">
-              <h2>{eName}</h2>
-              <h3>{eDesc}</h3>
-          </div>
-          <div>
-              {regs.map(reg => (
-              <div className="eventRegs" key={reg.id}>
-                <h4>{reg.name}</h4>
-                <p>{reg.comment}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-        );
-      }
-    }
+  useEffect(() => {
+    fetchData();
+  }, []);
+  const {id} = useParams();
+
+  async function fetchData() {
+    let resp = await fetch(WEB_SER+"events/"+id).then(res => res.json());
+    setEvent(resp);
   }
 
-export default EventPage;
+  return(
+    <div className="eventPage">
+        {event !== undefined ? (
+          <>
+            <div className="eventInfo">
+              <p>{event.name}</p>
+              <p>{event.description}</p>
+            </div>
+            <div className="eventRegs">
+              {event.registrations.map(reg => {
+                return(
+                  <div className="eventReg" key={reg.id}>
+                    <p>{reg.name}</p>
+                    <p>{reg.comment}</p>
+                  </div>
+                )
+              })}
+            </div>
+            </>
+          ): ""}
+    </div>
+  )
+}
