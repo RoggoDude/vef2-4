@@ -1,5 +1,6 @@
 ## Til að keyra: 
 npm install
+
 npm start
 
 ## ESlint er uppsett:
